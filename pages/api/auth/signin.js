@@ -1,4 +1,5 @@
 import User from "../../../models/User";
+import { verifyPassword } from "../../../utils/auth";
 import connectDB from "../../../utils/connectDB";
 
 async function handler(req,res) {
@@ -23,6 +24,13 @@ async function handler(req,res) {
     if(!user) {
       return res.status(404).json({status: "failed", message: "User doesn't exist"})  
     }
+
+    const isValid = await verifyPassword(password, user.password)
+
+    if (!isValid) {
+        return res.status(422).json({status: "failed", message: "Username or password isn incorrect!" })
+    }
+
 }
 
 export default handler;
