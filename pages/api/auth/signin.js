@@ -1,3 +1,4 @@
+import { sign } from "jsonwebtoken";
 import User from "../../../models/User";
 import { verifyPassword } from "../../../utils/auth";
 import connectDB from "../../../utils/connectDB";
@@ -14,6 +15,8 @@ async function handler(req,res) {
     }
 
     const {email, password} = req.body;
+    const secretKey = process.env.SECRET_KEY;
+    const expiration = 24 * 60 * 60;
 
     if(!email || !password) {
         return res.status(422).json({status: "failed", message: "Invalid Data" });
@@ -30,7 +33,7 @@ async function handler(req,res) {
     if (!isValid) {
         return res.status(422).json({status: "failed", message: "Username or password isn incorrect!" })
     }
-
+    const token = sign({email}, secretKey, {expiresIn: expiration }  )
 }
 
 export default handler;
