@@ -4,9 +4,8 @@ import connectDB from "../../utils/connectDB";
 
 async function handler(req,res) {
     if(req.method !== "POST") return;
-
     try {
-        await connectDB
+        await connectDB();
     }catch (err) {
         console.log(err);
         return res.status(500).json({status: "failed", message: "Error in connecting to DB"})
@@ -21,6 +20,7 @@ async function handler(req,res) {
     }
 
     const result = verifyToken(token, secretKey)
+    console.log(result.email)
 
     if (!result) {
         return res.status(401).json({ status: "failed", message: "You are unauthirized"})
@@ -42,6 +42,7 @@ async function handler(req,res) {
     user.name = name;
     user.lastName = lastName;
     user.save();
+    res.status(200).json({status: "success", data: {name, lastName , email:result.email}})
 }
 
 
